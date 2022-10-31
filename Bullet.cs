@@ -5,9 +5,9 @@ public class Bullet : MonoBehaviour
 {
     public float fireForce;
     public Vector2 damageRange;
-    public float knockBackForce;
+    public Vector2 knockBackForce;
     public float timeBetweenShots;
-    float damageToDeal;
+    int damageToDeal;
     Rigidbody2D rb;
     public string[] destroyOnCollisionWith;
     public string[] entitiesToDamage;
@@ -25,7 +25,7 @@ public class Bullet : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        damageToDeal = Random.Range(damageRange.x, damageRange.y);
+        damageToDeal = (int)Random.Range(damageRange.x, damageRange.y);
     }
 
     public void Direction(int direction)
@@ -59,6 +59,11 @@ public class Bullet : MonoBehaviour
                 camShaker.Shake(shakePreset);
                 Health ennmyHealth = collision.GetComponent<Health>();
                 ennmyHealth.TakeDamage(damageToDeal);
+                if (collision.GetComponent<EnemyAI>() != null)
+                {
+                    EnemyAI enemyAI = collision.GetComponent<EnemyAI>();
+                    enemyAI.Knockback(knockBackForce, dir);
+                }
             }
         }
     }
