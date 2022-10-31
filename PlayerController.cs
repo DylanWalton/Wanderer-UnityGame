@@ -1,5 +1,6 @@
 using UnityEngine;
 using MilkShake;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
@@ -63,6 +64,7 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
         stats = GetComponent<PlayerStats>();
         ladder = GetComponent<Ladder>();
+
     }
 
     // Update is called once per frame
@@ -80,6 +82,17 @@ public class PlayerController : MonoBehaviour
         CheckInput();
         Interact();
         PlatformManager();
+    }
+
+    public IEnumerator Knockback(Vector2 force, int direction, float time)
+    {  
+        canMove = false;
+
+        rb.velocity = new Vector2(force.x * direction, force.y);
+
+        yield return new WaitForSeconds(time);
+
+        canMove = true;
     }
 
     void CheckInput()
@@ -126,12 +139,12 @@ public class PlayerController : MonoBehaviour
         canMove = false;
         timeBtwnRolls = stats.timeBetweenRolls;
         canFlip = false;
-        if (m_FacingRight)
-            rb.velocity = new Vector2(stats.rollSpeed, 4f);
-        else
-        {
-            rb.velocity = new Vector2(-stats.rollSpeed, 4f);
-        }
+        //if (m_FacingRight)
+        //    rb.velocity = new Vector2(stats.rollSpeed, 4f);
+        //else
+        //{
+        //    rb.velocity = new Vector2(-stats.rollSpeed, 4f);
+        //}
     }
     void Rolling()
     {
@@ -299,6 +312,9 @@ public class PlayerController : MonoBehaviour
                 rb.velocity = new Vector2(rb.velocity.x, stats.jumpForce);
                 anim.SetTrigger("Jump");
             }
+
+            if (isRolling)
+                Rolling();
         }
     }
 
